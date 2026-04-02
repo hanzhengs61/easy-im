@@ -1,0 +1,30 @@
+run:
+  timeout: 5m
+  go: "1.25.5"
+
+linters:
+  enable:
+    - gofmt        # 格式化
+    - govet        # 静态分析
+    - errcheck     # 错误检查（不允许忽略 error）
+    - staticcheck  # 高级静态分析
+    - unused       # 未使用代码
+    - goimports    # import 排序
+    - misspell     # 拼写检查
+    - revive       # golint 替代品
+
+linters-settings:
+  gofmt:
+    simplify: true
+  revive:
+    rules:
+      - name: exported
+        severity: warning
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+
+version: 2

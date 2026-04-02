@@ -19,7 +19,7 @@
 ```
 ## 项目结构
 ```
-go-im/
+easy-im/
 ├── .github/
 │   └── workflows/
 │       └── ci.yml                  # GitHub Actions 流水线
