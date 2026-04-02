@@ -56,4 +56,8 @@ docker-build: ## 构建所有服务镜像
 clean: ## 清理编译产物
 	rm -rf bin/ coverage.out coverage.html
 
+goctl: ## 生成api
+	goctl api go -api api/user.api -dir internal/user
+gomodel: ## 生成model
+	goctl model mysql ddl -src deploy/sql/user.sql -dir internal/user/model --style go_zero
 .DEFAULT_GOAL := help

@@ -1,0 +1,15 @@
+Name: user-api
+Host: 0.0.0.0
+Port: 8888
+
+# MySQL 配置
+Mysql:
+  DataSource: "easy_im:easy-im-123456@tcp(127.0.0.1:3306)/easy_im?charset=utf8mb4&parseTime=true&loc=Local"
+
+# JWT 配置
+Jwt:
+  Secret: "your-super-secret-key-change-in-prod"   # 生产环境一定要改！
+  AccessTokenTTL: 7200   # 2小时（秒）
+  RefreshTokenTTL: 604800 # 7天（秒）
+
+CacheRedis: redis://127.0.0.1:6379

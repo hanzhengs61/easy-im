@@ -1,0 +1,46 @@
+syntax = "v1"
+
+info (
+	title:   "easy-im 用户服务"
+	desc:    "用户相关接口"
+	version: "v1"
+)
+
+type PingRequest {}
+
+type PingResponse {
+	Message string `json:"message"`
+}
+
+type RegisterRequest {
+	Username string `json:"username"` // 必填
+	Password string `json:"password"` // 必填
+	Nickname string `json:"nickname,optional"` // 可选
+}
+
+type RegisterResponse {
+	UserId int64  `json:"user_id"`
+	Token  string `json:"token"`
+}
+
+type LoginRequest {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type LoginResponse {
+	UserId int64  `json:"user_id"`
+	Token  string `json:"token"`
+}
+
+service user-api {
+	@handler PingHandler
+	get /ping (PingRequest) returns (PingResponse)
+
+	@handler RegisterHandler
+	post /register (RegisterRequest) returns (RegisterResponse)
+
+	@handler LoginHandler
+	post /login (LoginRequest) returns (LoginResponse)
+}
+
