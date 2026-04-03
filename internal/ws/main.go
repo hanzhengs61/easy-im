@@ -4,7 +4,9 @@ import (
 	"easy-im/internal/ws/config"
 	"easy-im/internal/ws/connmgr"
 	"easy-im/internal/ws/handler"
+	"easy-im/internal/ws/msghandler"
 	"easy-im/pkg/jwt"
+	"easy-im/pkg/kafka"
 	"easy-im/pkg/logger"
 	"easy-im/pkg/middleware"
 	"flag"
@@ -35,8 +37,15 @@ func main() {
 		RefreshTokenTTL: time.Duration(cfg.JWT.RefreshTokenTTL) * time.Second,
 	})
 
-	// todo:后续 接入 Kafka 时传入真实 msgHandler，暂时传 nil
-	mgr := connmgr.NewManager(jwtMgr, nil)
+	// Kafka 生产者
+	producer := kafka.NewProducer(kafka.ProducerConfig{
+		Brokers: []string{"localhost:9092"},
+		Topic:   "easy-im-messages",
+	})
+	defer producer.Close()
+
+	kafkaHandler := msghandler.NewKafkaHandler(producer)
+	mgr := connmgr.NewManager(jwtMgr, kafkaHandler)
 	wsHandler := handler.NewWSHandler(mgr)
 
 	mux := http.NewServeMux()

@@ -1,0 +1,18 @@
+Name: message-service
+
+DB:
+  DataSource: "easy_im:easy-im-123456@tcp(127.0.0.1:3306)/easy_im?charset=utf8mb4&parseTime=true&loc=Local"
+
+Mongo:
+  URI: "mongodb://root:easy-im-123456@localhost:27017"
+  Database: easy_im
+
+Kafka:
+  Brokers:
+    - "localhost:9092"
+  Topic: easy-im-messages
+  GroupID: easy-im-message-service
+
+Log:
+  Level: debug
+  Format: console
