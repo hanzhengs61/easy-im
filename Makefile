@@ -57,7 +57,18 @@ clean: ## 清理编译产物
 	rm -rf bin/ coverage.out coverage.html
 
 goctl: ## 生成api
-	goctl api go -api api/user.api -dir internal/user
+	goctl api go \
+      --api api/user.api \
+      --dir internal/user \
+      --style go_zero
 gomodel: ## 生成model
-	goctl model mysql ddl -src deploy/sql/user.sql -dir internal/user/model --style go_zero
+	goctl model mysql datasource \
+      --url "easy_im:easy-im-123456@tcp(127.0.0.1:3306)/easy_im" \
+      --table "users" \
+      --dir internal/user/model \
+      --style go_zero \
+gomock: ## 创建mock
+	mockgen -source=internal/user/model/usersModel.go \
+      -destination=internal/user/model/mock/usersModel_mock.go \
+      -package=mock
 .DEFAULT_GOAL := help

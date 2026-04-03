@@ -1,46 +1,70 @@
 syntax = "v1"
 
 info (
-	title:   "easy-im 用户服务"
-	desc:    "用户相关接口"
+	title:   "easy-im user service"
+	desc:    "用户模块：注册、登录、获取个人信息"
+	author:  "easy-im"
 	version: "v1"
 )
 
-type PingRequest {}
-
-type PingResponse {
-	Message string `json:"message"`
+// ──────────────────── 请求/响应结构体 ────────────────────
+type RegisterReq {
+	Username string `json:"username" validate:"required,min=3,max=32"`
+	Password string `json:"password" validate:"required,min=6,max=64"`
+	Nickname string `json:"nickname" validate:"required,min=1,max=32"`
 }
 
-type RegisterRequest {
-	Username string `json:"username"` // 必填
-	Password string `json:"password"` // 必填
-	Nickname string `json:"nickname,optional"` // 可选
-}
-
-type RegisterResponse {
-	UserId int64  `json:"user_id"`
-	Token  string `json:"token"`
-}
-
-type LoginRequest {
+type RegisterResp {
+	UserID   int64  `json:"user_id"`
 	Username string `json:"username"`
-	Password string `json:"password"`
+	Nickname string `json:"nickname"`
 }
 
-type LoginResponse {
-	UserId int64  `json:"user_id"`
-	Token  string `json:"token"`
+type LoginReq {
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
+type LoginResp {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	ExpiresIn    int64  `json:"expires_in"` // access token 有效期（秒）
+	UserID       int64  `json:"user_id"`
+	Nickname     string `json:"nickname"`
+}
+
+type UserInfoResp {
+	UserID    int64  `json:"user_id"`
+	Username  string `json:"username"`
+	Nickname  string `json:"nickname"`
+	Avatar    string `json:"avatar"`
+	CreatedAt int64  `json:"created_at"`
+}
+
+// ──────────────────── 路由定义 ────────────────────
+// 无需鉴权的路由
+@server (
+	prefix: /api/v1
+	group:  user
+)
 service user-api {
-	@handler PingHandler
-	get /ping (PingRequest) returns (PingResponse)
+	@doc "用户注册"
+	@handler Register
+	post /user/register (RegisterReq) returns (RegisterResp)
 
-	@handler RegisterHandler
-	post /register (RegisterRequest) returns (RegisterResponse)
+	@doc "用户登录"
+	@handler Login
+	post /user/login (LoginReq) returns (LoginResp)
+}
 
-	@handler LoginHandler
-	post /login (LoginRequest) returns (LoginResponse)
+// 需要 JWT 鉴权的路由
+@server (
+	prefix: /api/v1
+	group:  user
+)
+service user-api {
+	@doc "获取当前用户信息"
+	@handler GetUserInfo
+	get /user/info returns (UserInfoResp)
 }
 

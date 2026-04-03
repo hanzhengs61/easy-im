@@ -3,30 +3,35 @@
 
 package types
 
-type LoginRequest struct {
+type LoginReq struct {
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
+}
+
+type LoginResp struct {
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	ExpiresIn    int64  `json:"expires_in"` // access token 有效期（秒）
+	UserID       int64  `json:"user_id"`
+	Nickname     string `json:"nickname"`
+}
+
+type RegisterReq struct {
+	Username string `json:"username" validate:"required,min=3,max=32"`
+	Password string `json:"password" validate:"required,min=6,max=64"`
+	Nickname string `json:"nickname" validate:"required,min=1,max=32"`
+}
+
+type RegisterResp struct {
+	UserID   int64  `json:"user_id"`
 	Username string `json:"username"`
-	Password string `json:"password"`
+	Nickname string `json:"nickname"`
 }
 
-type LoginResponse struct {
-	UserId int64  `json:"user_id"`
-	Token  string `json:"token"`
-}
-
-type PingRequest struct {
-}
-
-type PingResponse struct {
-	Message string `json:"message"`
-}
-
-type RegisterRequest struct {
-	Username string `json:"username"`          // 必填
-	Password string `json:"password"`          // 必填
-	Nickname string `json:"nickname,optional"` // 可选
-}
-
-type RegisterResponse struct {
-	UserId int64  `json:"user_id"`
-	Token  string `json:"token"`
+type UserInfoResp struct {
+	UserID    int64  `json:"user_id"`
+	Username  string `json:"username"`
+	Nickname  string `json:"nickname"`
+	Avatar    string `json:"avatar"`
+	CreatedAt int64  `json:"created_at"`
 }

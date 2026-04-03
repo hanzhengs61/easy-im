@@ -1,18 +1,20 @@
 // Code scaffolded by goctl. Safe to edit.
 // goctl 1.10.1
 
-package logic
+package user
 
 import (
 	"context"
 	"easy-im/internal/user/model"
 	"easy-im/pkg/errorx"
 	"errors"
+	"time"
 
 	"easy-im/internal/user/internal/svc"
 	"easy-im/internal/user/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -30,7 +32,8 @@ func NewRegisterLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Register
 	}
 }
 
-func (l *RegisterLogic) Register(req *types.RegisterRequest) (resp *types.RegisterResponse, err error) {
+// Register 用户注册
+func (l *RegisterLogic) Register(req *types.RegisterReq) (resp *types.RegisterResp, err error) {
 	// 1. 检查用户名是否已存在
 	_, err = l.svcCtx.UserModel.FindOneByUsername(l.ctx, req.Username)
 	if err == nil {
@@ -46,29 +49,26 @@ func (l *RegisterLogic) Register(req *types.RegisterRequest) (resp *types.Regist
 		return nil, err
 	}
 	// 3. 插入用户
-	user := &model.User{
+	now := time.Now().UnixMilli()
+	user, err := l.svcCtx.UserModel.Insert(l.ctx, &model.Users{
+		Username:  req.Username,
+		Password:  string(hashed),
+		Nickname:  req.Nickname,
+		Status:    1,
+		CreatedAt: now,
+		UpdatedAt: now,
+	})
+	if err != nil {
+		l.Logger.Error("insert user failed", zap.Error(err))
+		return nil, errorx.Wrap(errorx.CodeServerError, err)
+	}
+
+	userID, _ := user.LastInsertId()
+	l.Logger.Info("user registered", zap.Int64("user_id", userID), zap.String("username", req.Username))
+
+	return &types.RegisterResp{
+		UserID:   userID,
 		Username: req.Username,
-		Password: string(hashed),
 		Nickname: req.Nickname,
-		Avatar:   "", // 后面可加默认头像
-		Gender:   0,
-		Status:   1,
-	}
-	insertResult, err := l.svcCtx.UserModel.Insert(l.ctx, user)
-	if err != nil {
-		return nil, err
-	}
-
-	userID, _ := insertResult.LastInsertId()
-
-	// 4. 生成 Token
-	token, err := l.svcCtx.JwtManager.GenerateAccessToken(userID, req.Username)
-	if err != nil {
-		return nil, err
-	}
-
-	return &types.RegisterResponse{
-		UserId: userID,
-		Token:  token,
 	}, nil
 }

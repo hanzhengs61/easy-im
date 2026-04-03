@@ -15,7 +15,7 @@ import (
 type ServiceContext struct {
 	Config     config.Config
 	JwtManager *jwt.Manager
-	UserModel  model.UserModel
+	UserModel  model.UsersModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -29,6 +29,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 			AccessTokenTTL:  time.Duration(c.Jwt.AccessTokenTTL) * time.Second,
 			RefreshTokenTTL: time.Duration(c.Jwt.RefreshTokenTTL) * time.Second,
 		}),
-		UserModel: model.NewUserModel(conn), // 传入 CacheConf 而不是 Cache 实例
+		UserModel: model.NewUsersModel(conn),
 	}
 }
