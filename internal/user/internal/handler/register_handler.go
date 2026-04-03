@@ -1,30 +1,30 @@
 // Code scaffolded by goctl. Safe to edit.
 // goctl 1.10.1
 
-package user
+package handler
 
 import (
+	"easy-im/internal/user/internal/logic"
 	"easy-im/pkg/response"
 	"net/http"
 
-	"easy-im/internal/user/internal/logic/user"
 	"easy-im/internal/user/internal/svc"
 	"easy-im/internal/user/internal/types"
 
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-// LoginHandler 用户登录
-func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+// RegisterHandler 用户注册
+func RegisterHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.LoginReq
+		var req types.RegisterReq
 		if err := httpx.Parse(r, &req); err != nil {
 			response.Fail(w, err)
 			return
 		}
 
-		l := user.NewLoginLogic(r.Context(), svcCtx)
-		resp, err := l.Login(&req)
+		l := logic.NewRegisterLogic(r.Context(), svcCtx)
+		resp, err := l.Register(&req)
 		if err != nil {
 			response.Fail(w, err)
 		} else {

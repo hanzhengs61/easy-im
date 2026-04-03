@@ -1,7 +1,7 @@
 // Code scaffolded by goctl. Safe to edit.
 // goctl 1.10.1
 
-package user
+package logic
 
 import (
 	"context"

@@ -68,7 +68,8 @@ gomodel: ## 生成model
       --dir internal/user/model \
       --style go_zero \
 gomock: ## 创建mock
-	mockgen -source=internal/user/model/usersModel.go \
-      -destination=internal/user/model/mock/usersModel_mock.go \
-      -package=mock
+	mockgen -source=internal/user/model/users_model.go \
+      -destination=internal/user/model/users_model_mock.go \
+      -package=model \
+      -mock_names=UsersModel=MockUsersModel
 .DEFAULT_GOAL := help

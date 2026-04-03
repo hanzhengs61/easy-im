@@ -1,0 +1,52 @@
+### 基础配置
+@baseUrl = http://localhost:8888/api/v1
+@contentType = application/json
+
+### 1. 用户注册
+POST {{baseUrl}}/user/register
+Content-Type: {{contentType}}
+
+{
+  "username": "testuser001",
+  "password": "Test@123456",
+  "nickname": "测试用户01"
+}
+
+
+### 2. 用户登录（运行后复制 access_token 填到下面）
+POST {{baseUrl}}/user/login
+Content-Type: {{contentType}}
+
+{
+  "username": "testuser001",
+  "password": "Test@123456"
+}
+
+### 3. 获取当前用户信息（需要 token）
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6InRlc3R1c2VyMDAxIiwiaXNzIjoiZWFzeS1pbS1yZWZyZXNoIiwiZXhwIjoxNzc1NzkyNTQ4LCJpYXQiOjE3NzUxODc3NDh9.ooegWbU2iZaYFkY3DxlT7nWVhQCTKwvNJ5z9vhsHFN8"
+
+
+GET {{baseUrl}}/user/info
+Authorization: Bearer {{token}}
+
+### 4. 注册重复用户名（期望返回 code=100102）
+POST {{baseUrl}}/user/register
+Content-Type: {{contentType}}
+
+{
+  "username": "testuser001",
+  "password": "Test@123456",
+  "nickname": "重复用户"
+}
+
+### 5. 错误密码登录（期望返回 code=100103）
+POST {{baseUrl}}/user/login
+Content-Type: {{contentType}}
+
+{
+  "username": "testuser001",
+  "password": "wrongpassword"
+}
+
+### 6. 无 token 访问（期望返回 code=100203）
+GET {{baseUrl}}/user/info
