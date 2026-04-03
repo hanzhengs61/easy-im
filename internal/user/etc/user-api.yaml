@@ -8,7 +8,7 @@ Mysql:
 
 # JWT 配置
 Jwt:
-  Secret: "your-super-secret-key-change-in-prod"   # 生产环境一定要改！
+  Secret: "easy-im-super-secret-key-change-in-prod"   # 生产环境一定要改！
   AccessTokenTTL: 7200   # 2小时（秒）
   RefreshTokenTTL: 604800 # 7天（秒）
 

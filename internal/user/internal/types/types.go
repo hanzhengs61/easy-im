@@ -9,11 +9,10 @@ type LoginReq struct {
 }
 
 type LoginResp struct {
-	AccessToken  string `json:"access_token"`
-	RefreshToken string `json:"refresh_token"`
-	ExpiresIn    int64  `json:"expires_in"` // access token 有效期（秒）
-	UserID       int64  `json:"user_id"`
-	Nickname     string `json:"nickname"`
+	AccessToken string `json:"access_token"`
+	ExpiresIn   int64  `json:"expires_in"` // access token 有效期（秒）
+	UserID      int64  `json:"user_id"`
+	Nickname    string `json:"nickname"`
 }
 
 type RegisterReq struct {

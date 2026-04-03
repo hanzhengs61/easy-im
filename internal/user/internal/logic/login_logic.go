@@ -60,19 +60,12 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 		return nil, errorx.Wrap(errorx.CodeServerError, err)
 	}
 
-	refreshToken, err := l.svcCtx.JwtManager.GenerateRefreshToken(user.Id, user.Username)
-	if err != nil {
-		l.Logger.Error("generate refresh token failed", zap.Error(err))
-		return nil, errorx.Wrap(errorx.CodeServerError, err)
-	}
-
 	l.Logger.Info("user logged in", zap.Int64("user_id", user.Id))
 
 	return &types.LoginResp{
-		AccessToken:  accessToken,
-		RefreshToken: refreshToken,
-		ExpiresIn:    l.svcCtx.Config.Jwt.AccessTokenTTL,
-		UserID:       user.Id,
-		Nickname:     user.Nickname,
+		AccessToken: accessToken,
+		ExpiresIn:   l.svcCtx.Config.Jwt.AccessTokenTTL,
+		UserID:      user.Id,
+		Nickname:    user.Nickname,
 	}, nil
 }
