@@ -240,3 +240,14 @@ func (m *Manager) sendAck(c *client.Client, seq int64, msgID int64) {
 		Content: content,
 	})
 }
+
+// DeliverToGroup 广播消息给群组所有在线成员
+// memberUIDs 由 Message 服务查群成员表后传入
+func (m *Manager) DeliverToGroup(memberUIDs []int64, msg *protocol.Message) {
+	for _, uid := range memberUIDs {
+		if uid == msg.FromUID {
+			continue // 发送方已通过 ACK 确认，不重复推
+		}
+		m.deliverToUser(uid, msg)
+	}
+}

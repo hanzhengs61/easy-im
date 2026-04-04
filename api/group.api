@@ -1,0 +1,96 @@
+syntax = "v1"
+
+info (
+	title:   "easy-im group service"
+	desc:    "群组模块：创建、加入、退出、成员管理"
+	author:  "easy-im"
+	version: "v1"
+)
+
+// ──────────────────── 请求/响应结构体 ────────────────────
+type CreateGroupReq {
+	Name        string `json:"name"        validate:"required,min=2,max=64"`
+	Avatar      string `json:"avatar"      validate:"omitempty,url"`
+	Description string `json:"description" validate:"omitempty,max=256"`
+	// 初始成员 UID 列表（不含群主自己）
+	MemberUIDs []int64 `json:"member_uids" validate:"omitempty,max=99"`
+}
+
+type CreateGroupResp {
+	GroupID     int64  `json:"group_id"`
+	Name        string `json:"name"`
+	MemberCount int    `json:"member_count"`
+}
+
+type JoinGroupReq {
+	GroupID int64 `json:"group_id" validate:"required"`
+}
+
+type QuitGroupReq {
+	GroupID int64 `json:"group_id" validate:"required"`
+}
+
+type KickMemberReq {
+	GroupID   int64 `json:"group_id"   validate:"required"`
+	TargetUID int64 `json:"target_uid" validate:"required"`
+}
+
+type GroupMember {
+	UID      int64  `json:"uid"`
+	Nickname string `json:"nickname"`
+	Avatar   string `json:"avatar"`
+	Role     int    `json:"role"`
+	JoinedAt int64  `json:"joined_at"`
+}
+
+type GetGroupMembersResp {
+	GroupID     int64         `json:"group_id"`
+	Name        string        `json:"name"`
+	MemberCount int           `json:"member_count"`
+	Members     []GroupMember `json:"members"`
+}
+
+type GroupInfo {
+	GroupID     int64  `json:"group_id"`
+	Name        string `json:"name"`
+	Avatar      string `json:"avatar"`
+	Description string `json:"description"`
+	OwnerUID    int64  `json:"owner_uid"`
+	MemberCount int    `json:"member_count"`
+}
+
+type GetMyGroupsResp {
+	Groups []GroupInfo `json:"groups"`
+}
+
+// ──────────────────── 路由定义 ────────────────────
+@server (
+	prefix: /api/v1
+	group:  group
+)
+service group-api {
+	@doc "创建群组"
+	@handler CreateGroup
+	post /group/create (CreateGroupReq) returns (CreateGroupResp)
+
+	@doc "加入群组"
+	@handler JoinGroup
+	post /group/join (JoinGroupReq)
+
+	@doc "退出群组"
+	@handler QuitGroup
+	post /group/quit (QuitGroupReq)
+
+	@doc "踢出成员（仅群主/管理员）"
+	@handler KickMember
+	post /group/kick (KickMemberReq)
+
+	@doc "获取群成员列表"
+	@handler GetGroupMembers
+	get /group/members/:groupId returns (GetGroupMembersResp)
+
+	@doc "获取我的群组列表"
+	@handler GetMyGroups
+	get /group/list returns (GetMyGroupsResp)
+}
+

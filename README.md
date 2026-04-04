@@ -4,7 +4,7 @@
 <img width="784" height="871" alt="image" src="https://github.com/user-attachments/assets/ec19cf74-883c-4236-a3c9-ea34109e8442" />
 
 
-## 技术栈选型
+## [技术栈选型](https://github.com/hanzhengs61/easy-im/README_选型.md)
 ```
 1. 微服务框架：go-zero
 2. 通信协议：HTTP REST + gRPC + WebSocket

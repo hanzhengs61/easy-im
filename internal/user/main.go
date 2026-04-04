@@ -4,14 +4,12 @@
 package main
 
 import (
-	"easy-im/pkg/middleware"
-	"flag"
-	"fmt"
-	"net/http"
-
 	"easy-im/internal/user/internal/config"
 	"easy-im/internal/user/internal/handler"
 	"easy-im/internal/user/internal/svc"
+	"easy-im/pkg/middleware"
+	"flag"
+	"fmt"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/core/stat"
@@ -30,12 +28,8 @@ func main() {
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
 
-	server.Use(func(next http.HandlerFunc) http.HandlerFunc {
-		// 将 LoggerMiddleware 包装为 http.HandlerFunc 签名
-		return func(w http.ResponseWriter, r *http.Request) {
-			middleware.LoggerMiddleware(next).ServeHTTP(w, r)
-		}
-	})
+	server.Use(middleware.RecoveryMiddleware)
+	server.Use(middleware.LoggerMiddleware)
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)

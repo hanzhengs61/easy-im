@@ -1,0 +1,15 @@
+Name: group-api
+Host: 0.0.0.0
+Port: 8003
+
+Log:
+  Level: debug
+  Mode: console
+
+DB:
+  DataSource: "easy_im:easy-im-123456@tcp(127.0.0.1:3306)/easy_im?charset=utf8mb4&parseTime=true&loc=Local"
+
+JWT:
+  Secret: "easy-im-super-secret-key-change-in-prod"
+  AccessTokenTTL: 7200
+  RefreshTokenTTL: 604800

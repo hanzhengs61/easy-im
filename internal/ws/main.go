@@ -52,35 +52,14 @@ func main() {
 	// WS 连接入口
 	mux.Handle("/ws", wsHandler)
 	// 其他普通 HTTP 接口（健康检查等）才走中间件
-	healthHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, `{"status":"ok","online":%d}`, mgr.OnlineCount())
 	})
-	// 为普通路由套中间件
-	protectedMux := middleware.RecoveryMiddleware(
-		middleware.LoggerMiddleware(
-			http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				switch r.URL.Path {
-				case "/health":
-					healthHandler.ServeHTTP(w, r)
-				default:
-					http.NotFound(w, r)
-				}
-			}),
-		),
-	)
-	// 使用自定义的 mux，根据路径选择是否走中间件
-	finalHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/ws" {
-			mux.ServeHTTP(w, r) // WS 直连，不走中间件
-		} else {
-			protectedMux.ServeHTTP(w, r) // 其他路由走中间件
-		}
-	})
+	chain := middleware.RecoveryHandler(middleware.LoggerHandler(mux))
 
 	addr := fmt.Sprintf("%s:%d", cfg.Host, cfg.Port)
-	logger.Info("ws server starting", zap.String("addr", addr))
-
-	if err := http.ListenAndServe(addr, finalHandler); err != nil {
-		logger.Fatal("ws server failed", zap.Error(err))
+	logger.Info("ws server started", zap.String("addr", addr))
+	if err := http.ListenAndServe(addr, chain); err != nil {
+		logger.Fatal("ws server error", zap.Error(err))
 	}
 }

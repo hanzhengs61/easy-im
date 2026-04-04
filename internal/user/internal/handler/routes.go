@@ -6,6 +6,7 @@ package handler
 import (
 	"net/http"
 
+	user "easy-im/internal/user/internal/handler/user"
 	"easy-im/internal/user/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -18,13 +19,13 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				// 用户登录
 				Method:  http.MethodPost,
 				Path:    "/user/login",
-				Handler: LoginHandler(serverCtx),
+				Handler: user.LoginHandler(serverCtx),
 			},
 			{
 				// 用户注册
 				Method:  http.MethodPost,
 				Path:    "/user/register",
-				Handler: RegisterHandler(serverCtx),
+				Handler: user.RegisterHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/v1"),
@@ -36,7 +37,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				// 获取当前用户信息
 				Method:  http.MethodGet,
 				Path:    "/user/info",
-				Handler: GetUserInfoHandler(serverCtx),
+				Handler: user.GetUserInfoHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/api/v1"),

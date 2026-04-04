@@ -1,9 +1,13 @@
 Name: user-api
 Host: 0.0.0.0
-Port: 8888
+Port: 8001
+
+Log:
+  Level: debug
+  Mode: console   # console | file | volume
 
 # MySQL 配置
-Mysql:
+DB:
   DataSource: "easy_im:easy-im-123456@tcp(127.0.0.1:3306)/easy_im?charset=utf8mb4&parseTime=true&loc=Local"
 
 # JWT 配置

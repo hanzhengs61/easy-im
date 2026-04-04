@@ -4,8 +4,8 @@
 package svc
 
 import (
-	"easy-im/internal/user/internal/config"
-	"easy-im/internal/user/model"
+	"easy-im/internal/group/internal/config"
+	"easy-im/internal/group/model"
 	"easy-im/pkg/jwt"
 	"time"
 
@@ -13,22 +13,24 @@ import (
 )
 
 type ServiceContext struct {
-	Config     config.Config
-	JwtManager *jwt.Manager
-	UserModel  model.UsersModel
+	Config      config.Config
+	GroupModel  model.GroupsModel
+	MemberModel model.GroupMembersModel
+	JWTManager  *jwt.Manager
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	// 初始化 MySQL 连接
+
 	conn := sqlx.NewMysql(c.DB.DataSource)
 
 	return &ServiceContext{
-		Config: c,
-		JwtManager: jwt.NewManager(jwt.Config{
+		Config:      c,
+		GroupModel:  model.NewGroupsModel(conn),
+		MemberModel: model.NewGroupMembersModel(conn),
+		JWTManager: jwt.NewManager(jwt.Config{
 			Secret:          c.Jwt.Secret,
 			AccessTokenTTL:  time.Duration(c.Jwt.AccessTokenTTL) * time.Second,
 			RefreshTokenTTL: time.Duration(c.Jwt.RefreshTokenTTL) * time.Second,
 		}),
-		UserModel: model.NewUsersModel(conn),
 	}
 }

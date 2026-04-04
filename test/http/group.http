@@ -1,0 +1,50 @@
+@baseUrl = http://localhost:8003/api/v1
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6InRlc3R1c2VyMDAxIiwiaXNzIjoiZWFzeS1pbSIsImV4cCI6MTc3NTI4Mjg0MSwiaWF0IjoxNzc1Mjc1NjQxfQ.AbzbxX_VaD5gZPqjn72eKwQNzJQ5q1DtpTLNxXSygcI
+
+### 1. 创建群组
+POST {{baseUrl}}/group/create
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "easy-im 开发群",
+  "avatar": "https://avatar.com/group.png",
+  "description": "项目开发讨论",
+  "member_uids": []
+}
+
+### 2. 加入群组
+POST {{baseUrl}}/group/join
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "group_id": 1
+}
+
+### 3. 获取群成员
+GET {{baseUrl}}/group/members/1
+Authorization: Bearer {{token}}
+
+### 4. 获取我的群组
+GET {{baseUrl}}/group/list
+Authorization: Bearer {{token}}
+
+### 5. 踢出成员
+POST {{baseUrl}}/group/kick
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "group_id": 1,
+  "target_uid": 2
+}
+
+### 6. 退出群组
+POST {{baseUrl}}/group/quit
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "group_id": 1
+}
